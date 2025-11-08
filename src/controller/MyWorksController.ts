@@ -23,8 +23,6 @@ export const getWork = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
-
-// ✅ Add a new work (with Cloudinary upload)
 export const addWork = async (req: Request, res: Response) => {
   try {
     const file = req.file;
@@ -37,10 +35,10 @@ export const addWork = async (req: Request, res: Response) => {
       isLive,
     } = req.body;
 
-    let imageUrl = "";
+    let mainImage = "";
     let publicId = "";
 
-    // Upload directly to Cloudinary if an image is attached
+    // ✅ Upload to Cloudinary
     if (file) {
       const uploadToCloudinary = () =>
         new Promise((resolve, reject) => {
@@ -55,16 +53,29 @@ export const addWork = async (req: Request, res: Response) => {
         });
 
       const result: any = await uploadToCloudinary();
-      imageUrl = result.secure_url;
+      mainImage = result.secure_url;
       publicId = result.public_id;
     }
 
+    // ✅ usingTech güvenli parse
+    let parsedUsingTech: string[] = [];
+    try {
+      // frontend JSON.stringify ile gönderiyorsa:
+      parsedUsingTech = usingTech ? JSON.parse(usingTech) : [];
+    } catch {
+      // frontend düz string gönderiyorsa (ör: "React, Tailwind"):
+      parsedUsingTech = usingTech
+        ? usingTech.split(",").map((t: string) => t.trim())
+        : [];
+    }
+
+    // ✅ Yeni work oluştur
     const newWork = new MyWorks({
-      imageUrl,
+      mainImage,
       publicId,
       projectName,
       projectDetails,
-      usingTech: usingTech ? JSON.parse(usingTech) : [],
+      usingTech: parsedUsingTech,
       projectLink,
       githubLink,
       isLive,
@@ -107,7 +118,7 @@ export const updateWork = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const {
-      imageUrl,
+      mainImage,
       projectName,
       projectDetails,
       usingTech,
@@ -119,7 +130,7 @@ export const updateWork = async (req: Request, res: Response) => {
     const updatedWork = await MyWorks.findByIdAndUpdate(
       id,
       {
-        imageUrl,
+        mainImage,
         projectName,
         projectDetails,
         usingTech,

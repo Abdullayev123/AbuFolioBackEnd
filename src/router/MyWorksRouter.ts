@@ -12,7 +12,7 @@ const myWorksRoutes = Router();
 
 myWorksRoutes.get("/", getWorks);
 myWorksRoutes.get("/:id", getWork);
-myWorksRoutes.post("/add-work", upload.single("imageUrl"), addWork);
+myWorksRoutes.post("/add-work", upload.single("mainImage"), addWork);
 myWorksRoutes.delete("/:id", deleteWork);
 myWorksRoutes.put("/:id", updateWork);
 

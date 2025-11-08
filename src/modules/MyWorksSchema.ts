@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 interface myWorks {
-  imageUrl: string;
+  mainImage: string;
   publicId: string;
   projectName: string;
   projectDetails: string;
@@ -15,7 +15,7 @@ interface myWorks {
 
 const MyWorksSchema = new Schema(
   {
-    imageUrl: { type: String, required: true },
+    mainImage: { type: String, required: true },
     publicId: { type: String, required: true },
     projectName: { type: String, required: true },
     projectDetails: { type: String, required: true, maxLength: 200 },
